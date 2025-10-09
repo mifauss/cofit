@@ -199,7 +199,7 @@ home_cost_params = st.columns(5, gap="large")
 with home_cost_params[1]:
   member_discounts = 1000 * st.slider("Member Discounts ($)", min_value=0, max_value=1000, value=500, step=10, format="%dk")
 with home_cost_params[2]:
-  realty_fee_percent = st.slider("Realty Transfer Fee (%)", min_value=0, max_value=5, value=1)
+  realty_fee_percent = st.slider("Realty Transfer Fee (%)", min_value=0.0, max_value=5.0, value=1.0)
 
 realty_fee = realty_fee_percent * grand_total / 100
 total_home_costs = grand_total + member_discounts + realty_fee
