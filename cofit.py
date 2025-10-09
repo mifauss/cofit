@@ -70,9 +70,9 @@ st.subheader("Phase 1: Aquisiton")
 aqui_params = st.columns(5, gap="large")
 with aqui_params[1]:
   purchase_price = 1e6 * st.slider("Purchase Prince ($)", min_value=0.5, max_value=5.0, value=1.4, format="%0.2fM")
-with aqui_params[3]:
-  closing_cost_percent = st.slider("Closing Costs (%)", min_value=0.0, max_value=5.0, value=2.0, step=0.1, format="%0.1f")
 with aqui_params[2]:
+  closing_cost_percent = st.slider("Closing Costs (%)", min_value=0.0, max_value=5.0, value=2.0, step=0.1, format="%0.1f")
+with aqui_params[3]:
   transfer_fee_percent = st.slider("Realtor Transfer Fee (%)", min_value=0.0, max_value=5.0, value=1.0, step=0.1, format="%0.1f")
 
 transfer_cost = transfer_fee_percent * purchase_price / 100
