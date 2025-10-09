@@ -70,22 +70,22 @@ st.subheader("Phase 1: Aquisiton")
 aqui_params = st.columns(5, gap="large")
 with aqui_params[1]:
   purchase_price = 1e6 * st.slider("Purchase Prince ($)", min_value=0.5, max_value=5.0, value=1.4, format="%0.2fM")
-with aqui_params[2]:
-  transfer_fee_percent = st.slider("NJ Realtor Transfer Fee (%)", min_value=0.0, max_value=5.0, value=1.0, step=0.1, format="%0.1f")
 with aqui_params[3]:
   closing_cost_percent = st.slider("Closing Costs (%)", min_value=0.0, max_value=5.0, value=2.0, step=0.1, format="%0.1f")
+with aqui_params[2]:
+  transfer_fee_percent = st.slider("Realtor Transfer Fee (%)", min_value=0.0, max_value=5.0, value=1.0, step=0.1, format="%0.1f")
 
 transfer_cost = transfer_fee_percent * purchase_price / 100
 closing_cost = closing_cost_percent * purchase_price / 100
 total_aqui_cost = purchase_price + transfer_cost + closing_cost
 
 aqui_results = st.columns(5, gap="large")
-with aqui_results[3]:
-  st.metric("NJ Realtor Transfer Fee ($)", show_value(transfer_cost))
-with aqui_results[2]:
-  st.metric("Closing Costs ($)", show_value(closing_cost))
 with aqui_results[1]:
   st.metric("Total Aqusition Costs ($)", show_value(total_aqui_cost))
+with aqui_results[2]:
+  st.metric("Closing Costs ($)", show_value(closing_cost))
+with aqui_results[3]:
+  st.metric("Realtor Transfer Fee ($)", show_value(transfer_cost))
 
 st.subheader("Phase 2: Pre-Construction (Soft Costs)")
 
