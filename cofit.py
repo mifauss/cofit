@@ -116,9 +116,9 @@ st.subheader("Phase 3: Construction (Hard Costs)")
 
 constr_params = st.columns(5, gap="large")
 with constr_params[1]:
-  building_per_sf = st.slider("Building Contruction per sf ($)", min_value=0, max_value=500, value=160, step=5, format="%d")
+  building_per_sf = st.slider("Building Construction per sf ($)", min_value=0, max_value=500, value=160, step=5, format="%d")
 with constr_params[2]:
-  common_house = 1000 * st.slider("Commmon House ($)", min_value=0, max_value=1000, value=800, step=10, format="%dk")
+  common_house = 1000 * st.slider("Common House ($)", min_value=0, max_value=1000, value=800, step=10, format="%dk")
 with constr_params[3]:
   site = 1000 * st.slider("Site Servising and Landscape ($)", min_value=0, max_value=1000, value=300, step=10, format="%dk")
 
