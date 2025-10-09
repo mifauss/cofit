@@ -175,10 +175,10 @@ st.text("")
 interest_columns = st.columns(5, gap="large")
 with interest_columns[1]:
   st.metric("Required Loan ($)", show_value(loan))
-  st.metric("Total Financing ($)", show_value(total_financing))
+  st.metric("Contingency ($)", show_value(contingency))
 with interest_columns[2]:
   st.metric("Interest ($)", show_value(interest))
-  st.metric("Contingency ($)", show_value(contingency))
+  st.metric("Total Financing ($)", show_value(total_financing))
 with interest_columns[3]:
   st.metric("Financing Bonus ($)", show_value(bonus))
 
