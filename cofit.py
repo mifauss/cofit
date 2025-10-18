@@ -29,38 +29,38 @@ with units_columns_param[3]:
   n_large = st.number_input("Number", min_value=0, max_value=50, value=10, step=1, key="n_large")
   size_large = st.number_input("Size (sf)", min_value=200, max_value=2000, value=1100, step=10)
 
-
 n_units = n_small + n_medium + n_large
-total_size = n_small * size_small + n_medium * size_medium + n_large * size_large
-size_average = total_size / n_units
+scalable_area = n_small * size_small + n_medium * size_medium + n_large * size_large
+average_unit_size = scalable_area / n_units
 
 
 units_columns_res = st.columns(5, gap="large", vertical_alignment="center")
 with units_columns_res[1]:
-  st.metric("Units", n_units)
+  st.metric("Scalable Area", prettify(int(scalable_area)))
 with units_columns_res[2]:
-  st.metric("Avg Area", prettify(int(size_average)))
+  st.metric("Units", n_units)
+with units_columns_res[3]:
+  st.metric("Avg Area", prettify(int(average_unit_size)))
 
 
 st.header("Development Size")
 
 size_params = st.columns(5, gap="large")
-with size_params[1]:
-  total_sealable_area = st.slider("Total Sealable Area (sf)", min_value=10000, max_value=50000, value=27000, step=1000)
 with size_params[2]:
   common_house_area = st.slider("Common House Area (sf)", min_value=1000, max_value=10000, value=4000, step=100)
 with size_params[3]:
   circulation_percent = st.slider("Circulation (%)", min_value=0, max_value=100, value=15)
 
-
-circulation_area = circulation_percent * total_sealable_area / 100
-total_area = total_sealable_area + common_house_area + circulation_area
+circulation_area = circulation_percent * scalable_area / 100
+total_area = scalable_area + common_house_area + circulation_area
 
 size_results = st.columns(5, gap="large")
-with size_results[2]:
-  st.metric("Circulation Area (sf)", prettify(int(circulation_area)))
 with size_results[1]:
   st.metric("Total Area (sf)", prettify(int(total_area)))
+with size_results[2]:
+  st.metric("Common House Area (sf)", prettify(int(common_house_area)))
+with size_results[3]:
+  st.metric("Circulation Area (sf)", prettify(int(circulation_area)))
 
 
 st.header("Development Analysis")
@@ -77,11 +77,11 @@ with aqui_params[3]:
 
 transfer_cost = transfer_fee_percent * purchase_price / 100
 closing_cost = closing_cost_percent * purchase_price / 100
-total_aqui_cost = purchase_price + transfer_cost + closing_cost
+total_cost_land = purchase_price + transfer_cost + closing_cost
 
 aqui_results = st.columns(5, gap="large")
 with aqui_results[1]:
-  st.metric("Total Aqusition Costs ($)", show_value(total_aqui_cost))
+  st.metric("Total Aqusition Costs ($)", show_value(total_cost_land))
 with aqui_results[2]:
   st.metric("Closing Costs ($)", show_value(closing_cost))
 with aqui_results[3]:
@@ -127,36 +127,44 @@ construction_cost = building_cost + common_house + site
 
 constr_results = st.columns(5, gap="large")
 with constr_results[1]:
-  st.metric("Building Contructions ($)", show_value(building_per_sf * total_area))
-with constr_results[2]:
   st.metric("Total Construction Cost ($)", show_value(construction_cost))
+with constr_results[2]:
+  st.metric("Building Contructions ($)", show_value(building_per_sf * total_area))
 
 
 st.subheader("Phase 4: Financing (Primary)")
 
+
+time_params = st.columns(5, gap="large")
+with time_params[1]:
+  time = st.number_input("Construction Time (months)", min_value=0, max_value=60, value=18, step=1,)
+with time_params[2]:
+  investor_funding = st.number_input("Investor Funding ($)", value=500000, step=10000)
+
+st.text("")
 primary_params = st.columns(5, gap="large")
-with primary_params[3]:
-  surveyor = 1000 * st.slider("Quantity surveyor ($)", min_value=0, max_value=50, value=30, format="%dk")
-  contingency_percent = st.slider("Contingency (%)", min_value=0, max_value=20, value=12, format="%d")
-with primary_params[2]:
-  time = st.slider("Construction Time (months)", min_value=0, max_value=36, value=18)
-  bonus_percent = st.slider("Financing Bonus (%)", min_value=0.0, max_value=10.0, value=0.7, step=0.1, format="%0.1f")
 with primary_params[1]:
-  carry_cost = st.slider("Carry Cost on Land (per months)", min_value=0, max_value=5000, value=2500, step=100)
-  interest_rate = st.slider("Interest Rate (%)", min_value=0.0, max_value=10.0, value=6.0, step=0.1, format="%0.1f")
+  construction_loan_interest = st.slider("Interest Rate Construction Loan (%)", min_value=0.0, max_value=15.0, value=12.0, step=0.1, format="%0.1f")
+  bonus_percent = st.slider("Financing Bonus (%)", min_value=0.0, max_value=10.0, value=0.7, step=0.1, format="%0.1f")
+with primary_params[2]:
+  investor_interest = st.slider("Interest Rate Investor Funding (%)", min_value=0.0, max_value=15.0, value=5.0, step=0.1, format="%0.1f")
+  surveyor = 1000 * st.slider("Quantity surveyor ($)", min_value=0, max_value=50, value=30, format="%dk")
+with primary_params[3]:
+  land_loan_interest = st.slider("Interest Rate Land Loan (%)", min_value=0.0, max_value=15.0, value=7.0, step=0.1, format="%0.1f")
+  contingency_percent = st.slider("Contingency (%)", min_value=0, max_value=20, value=12, format="%d")
 
-carry = carry_cost * (time + 2)
+monthly_interest_investors = investor_interest / 1200
+monthly_interest_land = land_loan_interest / 1200
+monthly_interest_construction = construction_loan_interest / 1200
 
-primary_results = st.columns(5, gap="large")
-with primary_results[1]:
-  st.metric("Carry Cost on Land ($)", show_value(carry))
-
-loan = total_aqui_cost + preco_total + construction_cost
+carry_cost_land = time * monthly_interest_land * total_cost_land
+construction_loan = preco_total + construction_cost - investor_funding
+loan = total_cost_land + construction_loan
 bonus = loan * bonus_percent / 100
 
 text_columns = st.columns([0.185, 0.815], gap="large")
 with text_columns[1]:
-  st.text("Loan Distribution (we only pay interests on what we take out)")
+  st.text("Construction Loan Distribution (we only pay interests on what we take out)")
 
 loan_params = st.columns(5, gap="large")
 with loan_params[1]:
@@ -166,22 +174,25 @@ with loan_params[2]:
 with loan_params[3]:
     loan_late = st.number_input("Late Stage (%)", min_value=0, max_value=100, value=100 - loan_early - loan_mid, disabled=True)
 
-stage_interest = (interest_rate / 12) * (time / 3) / 100
-interest = stage_interest * loan * (loan_early * 3 + loan_mid * 2 + loan_late) / 100
-total_financing = carry_cost + bonus + surveyor + interest
-contingency = (contingency_percent / 100) * (total_aqui_cost + preco_total + construction_cost)
+stage_interest_construction_loan = monthly_interest_construction * (time / 3)
+construction_interest_total = stage_interest_construction_loan * construction_loan * (loan_early * 3 + loan_mid * 2 + loan_late) / 100
+land_interest_total = time * monthly_interest_land * total_cost_land
+investor_interest_total = time * monthly_interest_investors * investor_funding
+
+total_financing = construction_interest_total + land_interest_total + investor_interest_total + bonus + surveyor
+contingency = (contingency_percent / 100) * (total_cost_land + preco_total + construction_cost)
 
 st.text("")
-interest_columns = st.columns(5, gap="large")
-with interest_columns[1]:
-  st.metric("Required Loan ($)", show_value(loan))
-  st.metric("Contingency ($)", show_value(contingency))
-with interest_columns[2]:
-  st.metric("Interest ($)", show_value(interest))
+financing_columns = st.columns(5, gap="large")
+with financing_columns[1]:
   st.metric("Total Financing ($)", show_value(total_financing))
-with interest_columns[3]:
-  st.metric("Financing Bonus ($)", show_value(bonus))
-
+  st.metric("Contingency ($)", show_value(contingency))
+  st.metric("Required Loan ($)", show_value(loan))
+with financing_columns[2]:
+  st.metric("Interest Construction Loan ($)", show_value(construction_interest_total)) 
+  st.metric("Interest Land Loan ($)", show_value(land_interest_total))
+  st.metric("Interest Investor Loan ($)", show_value(investor_interest_total))
+  
 
 st.header("Grand Total")
 
@@ -203,7 +214,7 @@ with home_cost_params[2]:
 
 realty_fee = realty_fee_percent * grand_total / 100
 total_home_costs = grand_total + member_discounts + realty_fee
-home_costs_per_sf = total_home_costs / total_area
+home_costs_per_sf = total_home_costs / scalable_area
 
 factor_small = 3 * size_small / (size_small + size_medium + size_large)
 factor_medium = 3 * size_medium / (size_small + size_medium + size_large)
@@ -223,5 +234,3 @@ with home_cost_results[2]:
 with home_cost_results[3]:
   st.metric("Average Home Cost ($)", show_value(total_home_costs / n_units))
   st.metric("Home Cost Type III ($)", show_value(home_cost_large))
-
-
